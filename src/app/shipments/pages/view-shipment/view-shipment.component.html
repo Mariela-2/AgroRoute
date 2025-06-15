@@ -138,11 +138,51 @@
 
   <!-- TAB: Information -->
   <p-tabPanel header="Information">
-    <p>Información general del envío:</p>
-    <p><strong>ID:</strong> {{ shipment?.code }}</p>
-    <p><strong>Status:</strong> {{ shipment?.status }}</p>
-    <p><strong>Creado:</strong> {{ (shipment?.createdAt || '') | dateFormat }}</p>
-    <p><strong>Total de paquetes:</strong> {{ packages?.length }}</p>
-    <p><strong>Transportista:</strong> {{ shipment?.carrier?.firstName }} {{ shipment?.carrier?.lastName }}</p>
-  </p-tabPanel>
+  <p>Información general del envío:</p>
+  <div class="alert-container">
+    <div *ngFor="let alert of alerts"
+          class="alert-card"
+          [ngClass]="getAlertClass(alert.status)"
+          (click)="showAlertDetail(alert)">
+      <div class="alert-icon">
+        <span *ngIf="alert.status !== 'RESUELTO'">&#9888;</span> <!-- ⚠ -->
+        <span *ngIf="alert.status === 'RESUELTO'">&#9989;</span> <!-- ✅ -->
+      </div>
+      <div class="alert-content">
+        <strong>Alerta</strong>
+        <div>{{ alert.date | date: 'yyyy/MM/dd HH:mm a' }}</div>
+        <p>El paquete {{ alert.packageCode }} ha llegado a una temperatura fuera de los límites aceptables</p>
+        <span class="alert-badge">{{ alert.status }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-backdrop" *ngIf="alertDialogVisible" (click)="closeModal()"></div>
+  <div
+    class="modal floating-modal"
+    *ngIf="alertDialogVisible"
+    style="position: fixed; top: 50%; left: 70%; transform: translate(-50%, -50%); z-index: 1050; min-width: 350px; max-width: 90vw; background: #fff; border-radius: 8px; box-shadow: 0 8px 32px rgba(0,0,0,0.25);"
+  >
+    <div class="modal-content" style="padding: 2rem; position: relative;">
+      <span
+        class="close-btn"
+        (click)="closeModal()"
+        style="position: absolute; top: 1rem; right: 1rem; font-size: 1.5rem; cursor: pointer;"
+        >&times;</span
+      >
+      <h3 style="margin-top: 0;">Alerta</h3>
+      <p><strong>Estado:</strong> {{ selectedAlert?.status }}</p>
+      <p><strong>Cod. envío:</strong> {{ selectedAlert?.shipmentCode }}</p>
+      <p><strong>Fecha y hora:</strong> {{ selectedAlert?.date | date: 'yyyy/MM/dd HH:mm a' }}</p>
+      <p><strong>Cod. Sensor:</strong> {{ selectedAlert?.sensorCode }}</p>
+      <p><strong>Tipo:</strong> Temperatura</p>
+      <p><strong>Cod. paquete:</strong> {{ selectedAlert?.packageCode }}</p>
+      <p><strong>Problema:</strong> Temperatura fuera del rango permitido</p>
+      <p><strong>Valor registrado:</strong> {{ selectedAlert?.recordedValue }}°C</p>
+      <p><strong>Rango esperado:</strong> {{ selectedAlert?.expectedRange }}</p>
+    </div>
+  </div>
+</p-tabPanel>
+
 </p-tabView>
