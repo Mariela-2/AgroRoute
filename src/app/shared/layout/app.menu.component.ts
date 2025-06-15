@@ -32,6 +32,11 @@ export class AppMenuComponent implements OnInit {
             icon: 'pi pi-truck',
             routerLink: ['/app/shipments'],
           },
+          {
+          label: 'sensors',
+          icon: 'pi pi-sliders-h', // Cambiado a un icono acorde a sensor
+          routerLink: ['/app/sensors'],
+        },
         ],
       },
       {

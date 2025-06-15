@@ -1,62 +1,105 @@
-<div class="grid nested-grid h-full">
-  <div class="col-12">
-    <div class="flex fle-row justify-content-between align-items-center">
-      <div class="">
-        <h4 class="font-bold mb-1">ID #{{ shipment?.code }}</h4>
-        <p class="mb-3">{{ shipment?.createdAt! | dateFormat }}</p>
+<p-tabView>
+  <!-- TAB: Tracking -->
+  <p-tabPanel header="Tracking">
+    <div class="grid nested-grid h-full">
+      <div class="col-12">
+        <div class="flex fle-row justify-content-between align-items-center">
+          <div>
+            <h4 class="font-bold mb-1">ID #{{ shipment?.code }}</h4>
+            <p class="mb-3">{{ shipment?.createdAt! | dateFormat }}</p>
+          </div>
+          <span
+            [class]="'shipment-badge status-' + shipment?.status"
+            style="font-size: 1.25rem"
+            >{{ shipment?.status }}</span
+          >
+        </div>
+
+        <p class="text-lg font-bold mb-3">Carrier</p>
+        <p class="text-mb"><span class="font-bold">Name:</span> {{ shipment?.carrier?.firstName }}</p>
+        <p class="text-mb"><span class="font-bold">Lastname:</span> {{ shipment?.carrier?.lastName }}</p>
+        <p class="text-mb"><span class="font-bold">Email:</span> {{ shipment?.carrier?.email }}</p>
+        <p class="text-mb"><span class="font-bold">DNI:</span> {{ shipment?.carrier?.dni }}</p>
+        <p class="text-mb"><span class="font-bold">Phone number:</span> (+51) {{ shipment?.carrier?.phoneNumber }}</p>
+
+        <div class="flex flex-row justify-content-between align-items-center mb-3">
+          <p class="text-lg font-bold mb-3">Packages</p>
+          <div *ngIf="shipment?.status == 'CREATED'">
+            <button
+              pButton
+              pRipple
+              class="p-button p-button-success mr-2"
+              type="button"
+              icon="pi pi-play"
+              label="Start"
+              (click)="onInitShipment()"
+            ></button>
+            <button
+              pButton
+              pRipple
+              class="p-button"
+              type="button"
+              label="Add Package"
+            ></button>
+          </div>
+        </div>
+
+        <p-table
+          [value]="packages!"
+          [paginator]="true"
+          [rows]="4"
+          [rowHover]="true"
+          responsiveLayout="scroll"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th>#</th>
+              <th>CUSTOMER</th>
+              <th>DESTINATION</th>
+              <th>DATE</th>
+              <th>STATUS</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-package>
+            <tr>
+              <td><p>{{ package.code }}</p></td>
+              <td>
+                <span class="font-bold">
+                  <p>{{ package.owner.names }} {{ package.owner.surnames }}</p>
+                </span>
+                <span>
+                  <p>(+51) {{ package.owner.phoneNumber }}</p>
+                </span>
+                <span>{{ package.owner.email }}</span>
+              </td>
+              <td><p>{{ package.destinationAddress }}</p></td>
+              <td><p>{{ package.createdAt | dateFormat }}</p></td>
+              <td>
+                <span
+                  [class]="'package-badge status-' + package.status"
+                  style="font-size: 1rem"
+                  >{{ package.status }}</span
+                >
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr><td colspan="5">No packages found.</td></tr>
+          </ng-template>
+          <ng-template pTemplate="loadingbody">
+            <tr><td colspan="5">Loading packages data. Please wait.</td></tr>
+          </ng-template>
+        </p-table>
       </div>
-      <span
-        [class]="'shipment-badge status-' + shipment?.status"
-        style="font-size: 1.25rem"
-        >{{ shipment?.status }}</span
-      >
     </div>
-    <p class="text-lg font-bold mb-3">Carrier</p>
-    <p class="text-mb">
-      <span class="font-bold">Name:</span>
-      {{ shipment?.carrier?.firstName }}
-    </p>
-    <p class="text-mb">
-      <span class="font-bold">Lastname:</span>
-      {{ shipment?.carrier?.lastName }}
-    </p>
-    <p class="text-mb">
-      <span class="font-bold">Email:</span>
-      {{ shipment?.carrier?.email }}
-    </p>
-    <p class="text-mb">
-      <span class="font-bold">DNI:</span>
-      {{ shipment?.carrier?.dni }}
-    </p>
-    <p class="text-mb">
-      <span class="font-bold">Phone number:</span>
-      (+51) {{ shipment?.carrier?.phoneNumber }}
-    </p>
-    <div class="flex flex-row justify-content-between align-items-center mb-3">
-      <p class="text-lg font-bold mb-3">Packages</p>
-      <div *ngIf="shipment?.status == 'CREATED'">
-        <button
-          pButton
-          pRipple
-          class="p-button p-button-success mr-2"
-          type="button"
-          icon="pi pi-play"
-          label="Start"
-          (click)="onInitShipment()"
-        ></button>
-        <button
-          pButton
-          pRipple
-          class="p-button"
-          type="button"
-          label="Add Package"
-        ></button>
-      </div>
-    </div>
+  </p-tabPanel>
+
+  <!-- TAB: Packages -->
+  <p-tabPanel header="Packages">
     <p-table
       [value]="packages!"
-      [paginator]="true"
-      [rows]="4"
+      [paginator]="false"
+      [rows]="6"
       [rowHover]="true"
       responsiveLayout="scroll"
     >
@@ -65,55 +108,81 @@
           <th>#</th>
           <th>CUSTOMER</th>
           <th>DESTINATION</th>
+          <th>TEMPERATURE</th>
+          <th>HUMIDITY</th>
           <th>DATE</th>
           <th>STATUS</th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-package>
+      <ng-template pTemplate="body" let-pkg>
         <tr>
-          <td style="min-width: 3rem">
-            <p>{{ package.code }}</p>
+          <td>{{ pkg.code }}</td>
+          <td>
+            <b>{{ pkg.owner.names }} {{ pkg.owner.surnames }}</b><br />
+            (+51) {{ pkg.owner.phoneNumber }}<br />
+            {{ pkg.owner.email }}
           </td>
-
-          <td style="min-width: 12rem">
-            <span class="font-bold">
-              <p>{{ package.owner.names }} {{ package.owner.surnames }}</p>
+          <td>{{ pkg.destinationAddress }}</td>
+          <td class="text-green">{{ pkg.temperature }} °C</td>
+          <td class="text-green">{{ pkg.humidity }}%</td>
+          <td>{{ pkg.createdAt | dateFormat }}</td>
+          <td>
+            <span class="package-badge status-{{ pkg.status }}">
+              {{ pkg.status }}
             </span>
-            <span>
-              <p>(+51) {{ package.owner.phoneNumber }}</p>
-            </span>
-            <span>{{ package.owner.email }} </span>
           </td>
-
-          <td style="min-width: 5rem">
-            <p>
-              {{ package.destinationAddress }}
-            </p>
-          </td>
-
-          <td style="min-width: 3rem">
-            <p>{{ package.createdAt | dateFormat }}</p>
-          </td>
-
-          <td style="min-width: 4rem">
-            <span
-              [class]="'package-badge status-' + package.status"
-              style="font-size: 1rem"
-              >{{ package.status }}</span
-            >
-          </td>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="emptymessage">
-        <tr>
-          <td colspan="7">No packages found.</td>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="loadingbody">
-        <tr>
-          <td colspan="7">Loading packages data. Please wait.</td>
         </tr>
       </ng-template>
     </p-table>
+  </p-tabPanel>
+
+  <!-- TAB: Information -->
+  <p-tabPanel header="Information">
+  <p>Información general del envío:</p>
+  <div class="alert-container">
+    <div *ngFor="let alert of alerts"
+          class="alert-card"
+          [ngClass]="getAlertClass(alert.status)"
+          (click)="showAlertDetail(alert)">
+      <div class="alert-icon">
+        <span *ngIf="alert.status !== 'RESUELTO'">&#9888;</span> <!-- ⚠ -->
+        <span *ngIf="alert.status === 'RESUELTO'">&#9989;</span> <!-- ✅ -->
+      </div>
+      <div class="alert-content">
+        <strong>Alerta</strong>
+        <div>{{ alert.date | date: 'yyyy/MM/dd HH:mm a' }}</div>
+        <p>El paquete {{ alert.packageCode }} ha llegado a una temperatura fuera de los límites aceptables</p>
+        <span class="alert-badge">{{ alert.status }}</span>
+      </div>
+    </div>
   </div>
-</div>
+
+  <!-- Modal -->
+  <div class="modal-backdrop" *ngIf="alertDialogVisible" (click)="closeModal()"></div>
+  <div
+    class="modal floating-modal"
+    *ngIf="alertDialogVisible"
+    style="position: fixed; top: 50%; left: 70%; transform: translate(-50%, -50%); z-index: 1050; min-width: 350px; max-width: 90vw; background: #fff; border-radius: 8px; box-shadow: 0 8px 32px rgba(0,0,0,0.25);"
+  >
+    <div class="modal-content" style="padding: 2rem; position: relative;">
+      <span
+        class="close-btn"
+        (click)="closeModal()"
+        style="position: absolute; top: 1rem; right: 1rem; font-size: 1.5rem; cursor: pointer;"
+        >&times;</span
+      >
+      <h3 style="margin-top: 0;">Alerta</h3>
+      <p><strong>Estado:</strong> {{ selectedAlert?.status }}</p>
+      <p><strong>Cod. envío:</strong> {{ selectedAlert?.shipmentCode }}</p>
+      <p><strong>Fecha y hora:</strong> {{ selectedAlert?.date | date: 'yyyy/MM/dd HH:mm a' }}</p>
+      <p><strong>Cod. Sensor:</strong> {{ selectedAlert?.sensorCode }}</p>
+      <p><strong>Tipo:</strong> Temperatura</p>
+      <p><strong>Cod. paquete:</strong> {{ selectedAlert?.packageCode }}</p>
+      <p><strong>Problema:</strong> Temperatura fuera del rango permitido</p>
+      <p><strong>Valor registrado:</strong> {{ selectedAlert?.recordedValue }}°C</p>
+      <p><strong>Rango esperado:</strong> {{ selectedAlert?.expectedRange }}</p>
+    </div>
+  </div>
+</p-tabPanel>
+
+</p-tabView>
