@@ -1,0 +1,20 @@
+<div class="grid nested-grid h-full">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h4 class="font-bold">Sensores</h4>
+      </div>
+      <div class="card-body">
+        <div *ngFor="let sensor of sensors" class="sensor-card">
+          <div class="sensor-info">
+            <div class="font-bold">#{{ sensor.id }}</div>
+            <div>{{ sensor.type }}</div>
+          </div>
+          <div class="sensor-status" [ngClass]="getStatusClass(sensor.status)">
+            {{ sensor.status }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

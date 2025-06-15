@@ -9,6 +9,7 @@ import { ViewTrackingComponent } from './tracking/pages/view-tracking/view-track
 import { authGuard } from './security/guards/auth.guard';
 import { LoginComponent } from './security/pages/login/login.component';
 import { DashboardComponent } from './dashboard/pages/dashboard/dashboard.component';
+import { SensorsComponent } from './sensors/pages/sensors/sensors.component';
 
 export const routes: Routes = [
   {
@@ -43,6 +44,10 @@ export const routes: Routes = [
         path: 'employees',
         component: EmployeesComponent,
       },
+      {
+        path: 'sensors',
+        component: SensorsComponent,
+      }
     ],
     canActivate: [authGuard],
   },
