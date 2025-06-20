@@ -152,63 +152,91 @@ export class ShipmentsComponent implements OnInit {
       },
     });
   }
+alerts = [
+    {
+      status: 'DETECTADO',
+      date: new Date('2025-05-07T10:08:00'),
+      shipmentCode: '#12345',
+      sensorCode: '#S01248',
+      packageCode: '#K3L4M',
+      recordedValue: 19,
+      expectedRange: '0°C - 8°C',
+      resolutionMessage: '',
+      resolutionType: ''
+    },
+    {
+      status: 'RESOLVIENDO',
+      date: new Date('2025-05-07T10:08:00'),
+      shipmentCode: '#12345',
+      sensorCode: '#S01248',
+      packageCode: '#A1B2C',
+      recordedValue: 19,
+      expectedRange: '0°C - 8°C',
+      resolutionMessage: '',
+      resolutionType: ''
+    },
+    {
+      status: 'RESUELTO',
+      date: new Date('2025-05-07T10:08:00'),
+      shipmentCode: '#12345',
+      sensorCode: '#S01248',
+      packageCode: '#Z9Y8X',
+      recordedValue: 19,
+      expectedRange: '0°C - 8°C',
+      resolutionMessage: '✅ La alerta del paquete #Z9Y8X fue resuelta previamente mediante ajuste del sistema.',
+      resolutionType: 'automatic'
+    }
+  ];
 
+  selectedAlert: any = null;
+  alertDialogVisible = false;
 
-  alerts = [
-  {
-    status: 'DETECTADO',
-    date: new Date('2025-05-07T10:08:00'),
-    shipmentCode: '#12345',
-    sensorCode: '#S01248',
-    packageCode: '#P0Q2R',
-    recordedValue: 19,
-    expectedRange: '0°C - 8°C'
-  },
-  {
-    status: 'RESOLVIENDO',
-    date: new Date('2025-05-07T10:08:00'),
-    shipmentCode: '#12345',
-    sensorCode: '#S01248',
-    packageCode: '#P0Q2R',
-    recordedValue: 19,
-    expectedRange: '0°C - 8°C'
-  },
-  {
-    status: 'RESUELTO',
-    date: new Date('2025-05-07T10:08:00'),
-    shipmentCode: '#12345',
-    sensorCode: '#S01248',
-    packageCode: '#P0Q2R',
-    recordedValue: 19,
-    expectedRange: '0°C - 8°C'
+  showAlertDetail(alert: any) {
+    this.selectedAlert = alert;
+    this.alertDialogVisible = true;
   }
-];
 
-selectedAlert: any = null;
-alertDialogVisible = false;
+  closeModal() {
+    this.alertDialogVisible = false;
+  }
 
-showAlertDetail(alert: any) {
-  this.selectedAlert = alert;
-  this.alertDialogVisible = true;
-}
+  getAlertClass(status: string): string {
+    switch (status) {
+      case 'DETECTADO':
+        return 'alert-detectado';
+      case 'RESOLVIENDO':
+        return 'alert-resolviendo';
+      case 'RESUELTO':
+        return 'alert-resuelto';
+      default:
+        return '';
+    }
+  }
 
-closeModal() {
-  this.alertDialogVisible = false;
-}
-
-getAlertClass(status: string): string {
-  switch (status) {
-    case 'DETECTADO':
-      return 'alert-detectado';
-    case 'RESOLVIENDO':
-      return 'alert-resolviendo';
-    case 'RESUELTO':
-      return 'alert-resuelto';
-    default:
-      return '';
+  resolveManually(packageCode: string) {
+  const alert = this.alerts.find(a => a.packageCode === packageCode);
+  if (alert) {
+    alert.status = 'RESUELTO';
+    alert.resolutionType = 'manual';
+    alert.resolutionMessage = `✅ La alerta del paquete ${alert.packageCode} fue resuelta manualmente el ${this.getFormattedDate(new Date())}. Acción: revisión física del paquete y ajuste del entorno.`;
   }
 }
-  getStatusClass(status: string): string {
-    return status === 'EN LINEA' ? 'online' : 'offline';
+
+resolveAutomatically(packageCode: string) {
+  const alert = this.alerts.find(a => a.packageCode === packageCode);
+  if (alert) {
+    alert.status = 'RESUELTO';
+    alert.resolutionType = 'automatic';
+    alert.resolutionMessage = `✅ El sistema resolvió automáticamente la alerta del paquete ${alert.packageCode} el ${this.getFormattedDate(new Date())}. Acción: activación del sistema de enfriamiento.`;
+  }
+}
+
+  private getFormattedDate(date: Date): string {
+    const y = date.getFullYear();
+    const m = ('0' + (date.getMonth() + 1)).slice(-2);
+    const d = ('0' + date.getDate()).slice(-2);
+    const h = ('0' + date.getHours()).slice(-2);
+    const min = ('0' + date.getMinutes()).slice(-2);
+    return `${y}/${m}/${d} ${h}:${min}`;
   }
 }

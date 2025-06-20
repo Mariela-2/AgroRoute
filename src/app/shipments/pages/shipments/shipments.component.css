@@ -57,3 +57,64 @@
   background-color: #4caf50;
   color: white;
 }
+
+.resolve-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin: 0.25rem;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.resolve-btn.manual {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.resolve-btn.manual:hover {
+  background-color: #0056b3;
+  box-shadow: 0 0 5px rgba(0, 91, 187, 0.6);
+}
+
+.resolve-btn.automatic {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.resolve-btn.automatic:hover {
+  background-color: #1e7e34;
+  box-shadow: 0 0 5px rgba(40, 167, 69, 0.6);
+}
+.resolution-message {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  border: 1px solid;
+}
+
+/* Base manual: azul */
+.resolution-message.manual {
+  background-color: #e0f0ff;
+  border-color: #007bff;
+  color: #007bff;
+}
+
+/* Base automático: verde */
+.resolution-message.automatic {
+  background-color: #e0ffe0;
+  border-color: #28a745;
+  color: #28a745;
+}
+
+.resolve-btn.accept {
+  background-color: #6c757d;
+  color: #fff;
+}
+
+.resolve-btn.accept:hover {
+  background-color: #5a6268;
+  box-shadow: 0 0 5px rgba(108, 117, 125, 0.6);
+}

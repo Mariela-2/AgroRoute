@@ -73,24 +73,7 @@ export class ViewShipmentComponent implements OnChanges {
   }
 
   alerts = [
-  {
-    status: 'DETECTADO',
-    date: new Date('2025-05-07T10:08:00'),
-    shipmentCode: '#12345',
-    sensorCode: '#S01248',
-    packageCode: '#P0Q2R',
-    recordedValue: 19,
-    expectedRange: '0°C - 8°C'
-  },
-  {
-    status: 'RESOLVIENDO',
-    date: new Date('2025-05-07T10:08:00'),
-    shipmentCode: '#12345',
-    sensorCode: '#S01248',
-    packageCode: '#P0Q2R',
-    recordedValue: 19,
-    expectedRange: '0°C - 8°C'
-  },
+  
   {
     status: 'RESUELTO',
     date: new Date('2025-05-07T10:08:00'),

@@ -14,54 +14,73 @@ import { ShipmentService } from '../../services/shipment.service';
 import { Shipment } from '../../models/shipment';
 import { TableModule } from 'primeng/table';
 import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
-import { TrackingSocketsService } from '../../../tracking/websockets/tracking-sockets.service';
 import { CommonModule, DecimalPipe } from '@angular/common';
-import { EMPTY, Observable } from 'rxjs';
+import { EMPTY, Observable, timer } from 'rxjs';
 
 @Component({
   selector: 'app-view-tracking-packages',
   standalone: true,
   imports: [TableModule, DateFormatPipe, DecimalPipe, CommonModule],
   templateUrl: './view-tracking-packages.component.html',
-  styleUrl: './view-tracking-packages.component.css',
+  styleUrls: ['./view-tracking-packages.component.css'],
 })
 export class ViewTrackingPackagesComponent
   implements OnChanges, AfterViewInit, OnDestroy
 {
   private _shipmentService = inject(ShipmentService);
-  private _trackingSocketService = inject(TrackingSocketsService);
   private _changeDetector = inject(ChangeDetectorRef);
 
   @Input() shipment?: Shipment;
-  wa: Observable<Package[]> = EMPTY;
 
   packages = signal<Package[]>([]);
 
+  // Mock alertas fijas
+  private alertasMock = [
+    {
+      code: 'A1B2C',
+      breakCondition: true,
+      temperature: 8.50,
+      humidity: 85.00,
+    },
+    {
+      code: 'Z9Y8X',
+      breakCondition: false,
+      temperature: 4.25,
+      humidity: 55.50,
+    },
+    {
+      code: 'K3L4M',
+      breakCondition: true,
+      temperature: 9.75,
+      humidity: 92.30,
+    },
+    {
+      code: 'A1B2C',
+      breakCondition: false,
+      temperature: 2.00,
+      humidity: 40.00,
+    }
+  ];
+
+  private alertIndex = 0;
+
   ngOnChanges(changes: SimpleChanges): void {
-    this._shipmentService
-      .getPackages(this.shipment?.id!)
-      .subscribe((data) => this.packages.set(data));
+    if (changes['shipment'] && this.shipment?.id) {
+      this._shipmentService
+        .getPackages(this.shipment.id)
+        .subscribe((data) => this.packages.set(data));
+    }
   }
 
   ngAfterViewInit(): void {
-    this._trackingSocketService.init();
-    this._trackingSocketService
-      .connect()
-      .then(() => {
-        this._trackingSocketService
-          .subscribe(`/topic/shipment/${this.shipment?.code}/packages`)
-          .subscribe({
-            next: (message) => {
-              this.updatePackageData(message);
-            },
-            error: (error) => {
-              console.error('Subscription error: ', error);
-            },
-          });
-      })
-      .catch((error) => {
-        console.error('Connection error: ', error);
-      });
+    // Simular recepción de alertas mock cada 3 segundos
+    timer(0, 3000).subscribe(() => {
+      if (this.alertIndex < this.alertasMock.length) {
+        const alerta = this.alertasMock[this.alertIndex];
+        this.updatePackageData(alerta);
+        this.alertIndex++;
+      }
+    });
   }
 
   private updatePackageData(update: {
@@ -73,13 +92,6 @@ export class ViewTrackingPackagesComponent
     const currentPackages = this.packages();
     const updatedPackages = currentPackages.map((pkg) => {
       if (pkg.code === update.code) {
-        if (update.code == 'K3L4M') {
-          console.log(
-            update.breakCondition,
-            update.humidity,
-            update.temperature
-          );
-        }
         return {
           ...pkg,
           breakCondition: update.breakCondition,
@@ -94,6 +106,6 @@ export class ViewTrackingPackagesComponent
   }
 
   ngOnDestroy(): void {
-    this._trackingSocketService.disconnect();
+    // No hay sockets, no hay nada que limpiar
   }
 }
