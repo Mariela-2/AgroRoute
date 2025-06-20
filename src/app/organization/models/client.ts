@@ -1,8 +1,9 @@
 export interface Client {
-  id: string; // Este es el UUID o ID del cliente
-  names: string;
-  surnames: string;
+  id: string;
+  firstName: string;
+  lastName: string;
   dni: string;
   email: string | null;
   phoneNumber: string;
+  fullName?: string;
 }

@@ -69,10 +69,9 @@ export class PackagesComponent implements OnInit {
   loadingPackages = true;
 
   customers = signal<Client[]>([]);
+  filteredCustomers = signal<Client[]>([]);
 
   selectedPackage = signal<Package>({} as Package);
-
-  filteredCustomers = signal<Client[]>([]);
 
   packageDialog: boolean = false;
   submitted: boolean = false;
@@ -100,23 +99,45 @@ export class PackagesComponent implements OnInit {
     customer: [null, Validators.required],
   });
 
-  display(customer: Client): string {
-    return `${customer.names} ${customer.surnames}`;
-  }
-
   ngOnInit(): void {
-    this.packages$ = this._packageService
-      .getAll()
-      .pipe(finalize(() => (this.loadingPackages = false)));
-  }
+  this.packages$ = this._packageService
+    .getAll()
+    .pipe(finalize(() => (this.loadingPackages = false)));
+
+  this._customerService.getAll().subscribe({
+    next: (data) => {
+      console.log('Clientes recibidos:', data);  // 👉 Mira si llegan datos
+      const enriched = data.map(c => ({
+        ...c,
+        fullName: `${c.firstName} ${c.lastName}`
+      }));
+      this.customers.set(enriched);
+      this.filteredCustomers.set(enriched);
+    },
+    error: (err) => {
+      console.error('Error al obtener clientes', err);  // 👉 Detecta error de red/backend
+    }
+  });
+}
+
+
 
   openAddDialog(): void {
-    this.submitted = false;
-    this.packageDialog = true;
-    this._customerService.getAll().subscribe((data) => {
-      this.customers.set(data);
-    });
-  }
+  this.submitted = false;
+  this.packageDialog = true;
+  this._customerService.getAll().subscribe((data) => {
+  const enriched = data.map(c => ({
+    ...c,
+    fullName: `${c.firstName} ${c.lastName}`
+  }));
+  this.customers.set(enriched);
+  this.filteredCustomers.set(enriched);
+  });
+
+}
+showAllCustomers() {
+  this.filteredCustomers.set(this.customers());
+}
 
   onSelectPackage(selectedPackage: Package): void {
     this.selectedPackage.update((_) => selectedPackage);
@@ -127,17 +148,15 @@ export class PackagesComponent implements OnInit {
   }
 
   filterCustomer(event: any) {
-    const filtered: Client[] = [];
-    const query = event.query;
-    for (let i = 0; i < this.customers().length; i++) {
-      const customer = this.customers()[i];
-      if (customer.names.toLowerCase().indexOf(query.toLowerCase()) == 0) {
-        filtered.push(customer);
-      }
-    }
+  const query = event.query.toLowerCase();
+  const filtered = this.customers().filter(customer =>
+    customer.fullName?.toLowerCase().includes(query)
+  );
+  this.filteredCustomers.set(filtered);
+}
 
-    this.filteredCustomers.update(() => filtered);
-  }
+
+
 
   onSubmit(): void {
     if (this.form.valid) {

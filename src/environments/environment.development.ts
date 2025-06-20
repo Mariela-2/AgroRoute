@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  serverBasePath: 'http://34.74.220.9:8080/api/v1',
+  serverBasePath: 'https://agroroute-core-472866594353.us-east1.run.app/api/v1',
 };

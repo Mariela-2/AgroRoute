@@ -51,7 +51,7 @@
                 <div class="ml-3">
                   <span>#{{ package.code }}</span>
                   <p class="font-bold mb-1">
-                    {{ package.owner.names }} <br />{{ package.owner.surnames }}
+                    {{ package.owner.firstName }} <br />{{ package.owner.lastName }}
                   </p>
                   <p class="mb-1">{{ package.createdAt | relativeTime }}</p>
                   <span
@@ -88,8 +88,8 @@
         <div class="">
           <p>
             <strong>Name:</strong>
-            {{ selectedPackage().owner.names }}
-            {{ selectedPackage().owner.surnames }}
+            {{ selectedPackage().owner.firstName }}
+            {{ selectedPackage().owner.lastName }}
           </p>
           <p>
             <strong>Email:</strong>
@@ -175,15 +175,18 @@
           [forceSelection]="true"
           [suggestions]="filteredCustomers()"
           (completeMethod)="filterCustomer($event)"
+          (onDropdownClick)="showAllCustomers()"
           [dropdown]="true"
-          field="names"
+          [showClear]="true"
+          field="fullName"
         >
           <ng-template let-customer pTemplate="item">
             <div class="flex align-items-center">
-              {{ customer.names }} {{ customer.surnames }}
+              {{ customer.fullName }}
             </div>
           </ng-template>
         </p-autoComplete>
+
       </div>
 
       <h6 class="font-bold">Details</h6>

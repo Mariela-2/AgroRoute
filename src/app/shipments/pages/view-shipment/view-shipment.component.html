@@ -65,7 +65,7 @@
               <td><p>{{ package.code }}</p></td>
               <td>
                 <span class="font-bold">
-                  <p>{{ package.owner.names }} {{ package.owner.surnames }}</p>
+                  <p>{{ package.owner.fistName }} {{ package.owner.LastName }}</p>
                 </span>
                 <span>
                   <p>(+51) {{ package.owner.phoneNumber }}</p>
@@ -118,7 +118,7 @@
         <tr>
           <td>{{ pkg.code }}</td>
           <td>
-            <b>{{ pkg.owner.names }} {{ pkg.owner.surnames }}</b><br />
+            <b>{{ pkg.owner.fistName }} {{ pkg.owner.lastName }}</b><br />
             (+51) {{ pkg.owner.phoneNumber }}<br />
             {{ pkg.owner.email }}
           </td>
@@ -137,7 +137,7 @@
   </p-tabPanel>
 
   <!-- TAB: Information -->
-  <p-tabPanel header="Information">
+  <p-tabPanel header="Alerts">
   <p>Información general del envío:</p>
   <div class="alert-container">
     <div *ngFor="let alert of alerts"
