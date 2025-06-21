@@ -1,17 +1,67 @@
 <div class="grid nested-grid h-full">
+  <!-- Sensores de Temperatura -->
   <div class="col-12">
-    <div class="card">
-      <div class="card-header">
-        <h4 class="font-bold">Sensores</h4>
+    <div class="card border-primary shadow">
+      <div class="card-header bg-primary text-white">
+        <h4 class="font-bold m-0"><i class="pi pi-thermometer fs-4"></i> Sensores de Temperatura</h4>
+      </div>
+
+      <div class="card-body">
+        <div *ngFor="let sensor of sensorsTemperature" class="sensor-card p-3 mb-3 border rounded shadow-sm bg-light d-flex justify-content-between align-items-center">
+          <div class="d-flex flex-column gap-2">
+            <div class="font-bold text-primary fs-5">
+              <i class="pi pi-thermometer fs-4"></i> Temperatura
+            </div>
+            <div class="text-muted"><i class="pi pi-chart-line"></i> <strong>Valor:</strong> <span class="fs-5 text-dark">{{ sensor.temperature }} °C</span></div>
+            <div class="text-muted"><i class="pi pi-box"></i> <strong>Paquete:</strong> {{ sensor.code }}</div>
+            <div class="text-muted"><i class="pi pi-user"></i> <strong>Cliente:</strong> {{ sensor.owner.firstName }} {{ sensor.owner.lastName }}</div>
+            <div class="text-muted"><i class="pi pi-map-marker"></i> <strong>Destino:</strong> {{ sensor.destinationAddress }}</div>
+          </div>
+
+          <div class="text-end">
+            <span 
+              class="badge rounded-pill p-2 fs-6"
+              [ngClass]="{
+                'bg-success text-green': sensor.status === 'N_TRANSIIT',
+              'bg-danger text-red': sensor.status !== 'IN_TRANSIT'
+              }"
+            >
+              {{ sensor.status }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sensores de Humedad -->
+  <div class="col-12 mt-3">
+    <div class="card border-primary shadow">
+      <div class="card-header bg-primary text-white">
+        <h4 class="font-bold m-0"><i class="pi pi-thermometer fs-4"></i> Sensores de Húmedad</h4>
       </div>
       <div class="card-body">
-        <div *ngFor="let sensor of sensors" class="sensor-card">
-          <div class="sensor-info">
-            <div class="font-bold">#{{ sensor.id }}</div>
-            <div>{{ sensor.type }}</div>
+        <div *ngFor="let sensor of sensorsHumidity" class="sensor-card p-3 mb-3 border rounded shadow-sm bg-light d-flex justify-content-between align-items-center">
+          <div class="d-flex flex-column gap-2">
+            <div class="font-bold text-primary fs-5">
+              <i class="pi pi-thermometer fs-4"></i> Húmedad
+            </div>
+            <div class="text-muted"><i class="pi pi-chart-line"></i> <strong>Valor:</strong> <span class="fs-5 text-dark">{{ sensor.humidity }} %</span></div>
+            <div class="text-muted"><i class="pi pi-box"></i> <strong>Paquete:</strong> {{ sensor.code }}</div>
+            <div class="text-muted"><i class="pi pi-user"></i> <strong>Cliente:</strong> {{ sensor.owner.firstName }} {{ sensor.owner.lastName }}</div>
+            <div class="text-muted"><i class="pi pi-map-marker"></i> <strong>Destino:</strong> {{ sensor.destinationAddress }}</div>
           </div>
-          <div class="sensor-status" [ngClass]="getStatusClass(sensor.status)">
-            {{ sensor.status }}
+
+          <div class="text-end">
+            <span 
+              class="badge rounded-pill p-2 fs-6"
+              [ngClass]="{
+              'bg-success text-green': sensor.status === 'N_TRANSIIT',
+              'bg-danger text-red': sensor.status !== 'IN_TRANSIT'
+              }"
+            >
+              {{ sensor.status }}
+            </span>
           </div>
         </div>
       </div>
